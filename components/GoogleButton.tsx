@@ -1,17 +1,37 @@
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import Colors from "../constants/Colors";
 import GoogleIcon from "./GoogleIcon";
 
-export default function GoogleButton() {
+interface Props {
+  handlePress: () => void;
+  isLoading?: boolean;
+}
+
+export default function GoogleButton({
+  handlePress,
+  isLoading = false,
+}: Props) {
   return (
     <Pressable
-      className="bg-white py-4 rounded-lg items-center active:opacity-80"
-      onPress={() => console.log("Google Login Pressed")}
+      onPress={handlePress}
+      disabled={isLoading}
+      className="py-4 rounded-lg items-center active:opacity-80"
+      style={{ backgroundColor: Colors.white }}
     >
       <View className="flex-row items-center gap-3">
-        <GoogleIcon size={22} />
-        <Text className="text-black text-base font-medium">
-          Continue with Google
-        </Text>
+        {isLoading ? (
+          <ActivityIndicator color={Colors.primary} />
+        ) : (
+          <>
+            <GoogleIcon size={22} />
+            <Text
+              className="text-base font-medium"
+              style={{ color: Colors.black }}
+            >
+              Continue with Google
+            </Text>
+          </>
+        )}
       </View>
     </Pressable>
   );
