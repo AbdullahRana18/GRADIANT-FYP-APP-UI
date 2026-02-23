@@ -2,15 +2,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import Colors from "../constants/Colors";
 import GoogleIcon from "./GoogleIcon";
 
-interface Props {
-  handlePress: () => void;
-  isLoading?: boolean;
-}
-
-export default function GoogleButton({
-  handlePress,
-  isLoading = false,
-}: Props) {
+export default function GoogleButton({ handlePress, isLoading = false }) {
   return (
     <Pressable
       onPress={handlePress}

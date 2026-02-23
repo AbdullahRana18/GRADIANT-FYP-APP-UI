@@ -1,12 +1,7 @@
 import { Pressable, Text } from "react-native";
 import Colors from "../constants/Colors";
 
-interface Props {
-  title: string;
-  handlePress: () => void;
-}
-
-export default function SecondaryButton({ title, handlePress }: Props) {
+export default function SecondaryButton({ title, handlePress }) {
   return (
     <Pressable
       onPress={handlePress}

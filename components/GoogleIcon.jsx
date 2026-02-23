@@ -1,10 +1,6 @@
 import Svg, { Path } from "react-native-svg";
 
-interface GoogleIconProps {
-  size?: number;
-}
-
-export default function GoogleIcon({ size = 20 }: GoogleIconProps) {
+export default function GoogleIcon({ size = 20 }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 48 48">
       <Path

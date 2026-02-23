@@ -1,17 +1,11 @@
 import { ActivityIndicator, Pressable, Text } from "react-native";
 import Colors from "../constants/Colors";
 
-interface Props {
-  title: string;
-  handlePress: () => void;
-  isLoading?: boolean;
-}
-
 export default function PrimaryButton({
   title,
   handlePress,
   isLoading = false,
-}: Props) {
+}) {
   return (
     <Pressable
       onPress={handlePress}
