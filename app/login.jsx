@@ -26,7 +26,7 @@ export default function LoginScreen() {
           <Ionicons name="arrow-back" size={24} color={Colors.white} />
         </Pressable>
 
-        {/* Logo Section (Same as Welcome) */}
+        {/* Logo Section */}
         <View className="items-center mb-6">
           <Image
             source={require("../assets/images/logo.png")}
@@ -61,8 +61,11 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
-        <Pressable className="items-end mb-6">
-          <Text style={{ color: Colors.primary }}>Forgot Password?</Text>
+        <Pressable
+          className="items-end mb-6"
+          onPress={() => router.push("/forgot-password")}
+        >
+          <Text style={{ color: Colors.primary }}>Forgot password?</Text>
         </Pressable>
 
         <PrimaryButton
@@ -83,6 +86,7 @@ export default function LoginScreen() {
           <Text style={{ color: Colors.textSecondary }}>
             Don't have an account?{" "}
           </Text>
+
           <Pressable onPress={() => router.push("/signup")}>
             <Text style={{ color: Colors.primary }}>Sign Up</Text>
           </Pressable>
