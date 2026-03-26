@@ -83,7 +83,7 @@ export default function Dashboard() {
             <SubjectCard
               title="Geography"
               icon="earth"
-              //   onPress={() => router.push("/geography")}
+              onPress={() => router.push("/geography")}
             />
 
             <SubjectCard
