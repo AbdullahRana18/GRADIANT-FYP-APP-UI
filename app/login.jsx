@@ -70,7 +70,7 @@ export default function LoginScreen() {
 
         <PrimaryButton
           title="Login"
-          handlePress={() => console.log("Login Pressed")}
+          handlePress={() => router.replace("/dashboard")}
         />
 
         <Text
@@ -80,7 +80,8 @@ export default function LoginScreen() {
           or
         </Text>
 
-        <GoogleButton handlePress={() => console.log("Google Login")} />
+        {/* <GoogleButton handlePress={() => console.log("Google Login")} /> */}
+        <GoogleButton handlePress={() => router.push("/google-auth")} />
 
         <View className="flex-row justify-center mt-6">
           <Text style={{ color: Colors.textSecondary }}>
