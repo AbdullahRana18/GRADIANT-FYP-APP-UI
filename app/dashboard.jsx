@@ -1,13 +1,43 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router"; // ✅ ADD
-import { Image, ScrollView, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SubjectCard from "../components/SubjectCard";
+import AppDecor from "../components/shared/AppDecor";
+import SubjectCard from "../components/shared/SubjectCard";
 import Colors from "../constants/Colors";
+import { getProfile } from "../lib/storage";
+
+const recent = [
+  { icon: "calculator-variant", text: "Solve quadratic equation", color: "#5EEAD4" },
+  { icon: "chart-line", text: "Define inflation (Economics)", color: "#86EFAC" },
+  { icon: "book-open-page-variant", text: "Causes of World War I", color: "#93C5FD" },
+];
 
 export default function Dashboard() {
-  const router = useRouter(); // ✅ ADD
+  const router = useRouter();
+  const [displayName, setDisplayName] = useState("Abdullah Rana");
+  const [photoUri, setPhotoUri] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      getProfile().then((p) => {
+        if (p.displayName) setDisplayName(p.displayName);
+        setPhotoUri(p.photoUri ?? "");
+      });
+    }, [])
+  );
 
   return (
     <LinearGradient
@@ -18,103 +48,361 @@ export default function Dashboard() {
       ]}
       className="flex-1"
     >
-      <SafeAreaView className="flex-1 px-4 py-6">
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {/* 🔝 HEADER */}
-          <View className="flex-row justify-between items-center mb-6">
-            <View className="flex-row items-center gap-3">
-              <Image
-                source={require("../assets/images/logo.png")}
-                className="w-12 h-12 rounded-full"
-              />
-              <View>
-                <Text style={{ color: Colors.textSecondary }}>
-                  Hello, Rana 👋
+      <AppDecor />
+      <SafeAreaView className="flex-1">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 28, paddingTop: 12 }}
+        >
+          <View style={styles.topRow}>
+            <Pressable
+              onPress={() => router.push("/settings")}
+              style={({ pressed }) => [
+                styles.profilePress,
+                pressed && { opacity: 0.92 },
+              ]}
+            >
+              <LinearGradient
+                colors={[Colors.primaryDark, Colors.primary]}
+                style={styles.avatarRing}
+              >
+                <Image
+                  source={
+                    photoUri
+                      ? { uri: photoUri }
+                      : require("../assets/images/logo.png")
+                  }
+                  style={styles.avatarImg}
+                  resizeMode={photoUri ? "cover" : "contain"}
+                />
+              </LinearGradient>
+              <View style={styles.profileText}>
+                <View style={styles.profileTitleRow}>
+                  <Text style={styles.helloLabel}>Hello</Text>
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={18}
+                    color={Colors.textMuted}
+                  />
+                </View>
+                <Text style={styles.profileName} numberOfLines={1}>
+                  {displayName}
                 </Text>
-                <Text className="font-bold" style={{ color: Colors.accent }}>
-                  O Level Student
+                <Text style={styles.profileRole}>O Level Student</Text>
+              </View>
+            </Pressable>
+
+            <View className="flex-row gap-2">
+              <Pressable
+                onPress={() =>
+                  Alert.alert("Notifications", "No new notifications yet.")
+                }
+                style={styles.iconBtn}
+                hitSlop={8}
+              >
+                <Ionicons
+                  name="notifications-outline"
+                  size={22}
+                  color={Colors.white}
+                />
+              </Pressable>
+              <Pressable
+                onPress={() => router.replace("/welcome")}
+                style={styles.iconBtn}
+                hitSlop={8}
+              >
+                <Ionicons
+                  name="log-out-outline"
+                  size={22}
+                  color={Colors.white}
+                />
+              </Pressable>
+            </View>
+          </View>
+
+          <LinearGradient
+            colors={["rgba(63,183,168,0.25)", "rgba(79,209,197,0.08)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.statCard}
+          >
+            <View style={styles.statInner}>
+              <View style={styles.statIconWrap}>
+                <MaterialCommunityIcons
+                  name="chart-box-outline"
+                  size={26}
+                  color={Colors.accent}
+                />
+              </View>
+              <View style={{ flex: 1, marginLeft: 14 }}>
+                <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
+                  Total questions asked
                 </Text>
+                <Text style={styles.statNumber}>25</Text>
+              </View>
+              <View style={[styles.statBadge, { marginLeft: 10 }]}>
+                <Text style={styles.statBadgeText}>This week</Text>
               </View>
             </View>
+          </LinearGradient>
 
-            <View className="flex-row gap-4">
-              <Ionicons name="notifications-outline" size={24} color="white" />
-              <Ionicons name="log-out-outline" size={24} color="white" />
-            </View>
+          <View style={styles.sectionHead}>
+            <MaterialCommunityIcons
+              name="view-grid-outline"
+              size={20}
+              color={Colors.accent}
+            />
+            <Text style={styles.sectionTitle}>Your subjects</Text>
           </View>
-
-          {/* 📊 TOTAL QUESTIONS */}
-          <View
-            className="p-4 rounded-xl mb-6"
-            style={{ backgroundColor: Colors.inputBackground }}
-          >
-            <Text style={{ color: Colors.textSecondary }}>
-              Total Questions Asked
-            </Text>
-            <Text
-              className="text-2xl font-bold mt-1"
-              style={{ color: Colors.white }}
-            >
-              25
-            </Text>
-          </View>
-
-          {/* 📚 SUBJECTS */}
-          <Text
-            className="text-lg font-bold mb-3"
-            style={{ color: Colors.accent }}
-          >
-            Select Subject
-          </Text>
 
           <View className="flex-row flex-wrap justify-between">
             <SubjectCard
               title="Mathematics"
-              icon="calculator"
-              onPress={() => router.push("/mathematics")}
+              icon="calculator-variant"
+              onPress={() => router.push("/maths")}
             />
-
             <SubjectCard
               title="History"
-              icon="book"
+              icon="book-open-page-variant"
               onPress={() => router.push("/history")}
             />
-
             <SubjectCard
               title="Geography"
               icon="earth"
               onPress={() => router.push("/geography")}
             />
-
             <SubjectCard
               title="Economics"
-              icon="stats-chart"
-              //   onPress={() => router.push("/economics")}
+              icon="chart-line"
+              onPress={() => router.push("/economics")}
             />
           </View>
 
-          {/* 🕘 RECENT QUESTIONS */}
-          <Text
-            className="text-lg font-bold mt-6 mb-3"
-            style={{ color: Colors.accent }}
-          >
-            Recent Questions
-          </Text>
-
-          <View
-            className="p-4 rounded-xl"
-            style={{ backgroundColor: Colors.inputBackground }}
-          >
-            <Text style={{ color: Colors.white }}>
-              • Solve quadratic equation
-            </Text>
-            <Text style={{ color: Colors.white }}>
-              • Define inflation (Economics)
-            </Text>
-            <Text style={{ color: Colors.white }}>• Causes of World War 1</Text>
+          <View style={[styles.sectionHead, { marginTop: 22 }]}>
+            <MaterialCommunityIcons
+              name="history"
+              size={20}
+              color={Colors.accent}
+            />
+            <Text style={styles.sectionTitle}>Recent activity</Text>
           </View>
+
+          <View style={styles.recentCard}>
+            {recent.map((item, idx) => (
+              <View
+                key={item.text}
+                style={[
+                  styles.recentRow,
+                  idx === recent.length - 1 && { marginBottom: 0 },
+                ]}
+              >
+                <View
+                  style={[styles.recentDot, { backgroundColor: item.color }]}
+                />
+                <MaterialCommunityIcons
+                  name={item.icon}
+                  size={20}
+                  color={Colors.textMuted}
+                  style={{ marginLeft: 12 }}
+                />
+                <Text style={styles.recentText}>{item.text}</Text>
+              </View>
+            ))}
+          </View>
+
+          <Pressable
+            onPress={() => router.push("/onboarding")}
+            style={({ pressed }) => [
+              styles.tourBtn,
+              pressed && { opacity: 0.9 },
+            ]}
+          >
+            <View style={styles.tourBtnInner}>
+              <MaterialCommunityIcons
+                name="play-circle-outline"
+                size={22}
+                color={Colors.accent}
+              />
+              <Text style={styles.tourBtnText}>Replay intro tour</Text>
+            </View>
+          </Pressable>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 22,
+  },
+  profilePress: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 8,
+    paddingVertical: 4,
+    paddingRight: 8,
+  },
+  profileText: {
+    flex: 1,
+    marginLeft: 12,
+    minWidth: 0,
+  },
+  profileTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  helloLabel: {
+    color: Colors.textSecondary,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  profileName: {
+    color: Colors.accent,
+    fontWeight: "800",
+    fontSize: 18,
+    marginTop: 2,
+  },
+  profileRole: {
+    color: Colors.textMuted,
+    fontSize: 13,
+    marginTop: 2,
+  },
+  avatarRing: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    padding: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarImg: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.surface,
+  },
+  iconBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: Colors.cardBorder,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statCard: {
+    borderRadius: 22,
+    padding: 2,
+    marginBottom: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+      },
+      android: { elevation: 6 },
+    }),
+  },
+  statInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.surface,
+    borderRadius: 20,
+    padding: 16,
+  },
+  statIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: Colors.surfaceAlt,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: Colors.cardBorder,
+  },
+  statNumber: {
+    color: Colors.white,
+    fontSize: 32,
+    fontWeight: "800",
+    marginTop: 4,
+  },
+  statBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: Colors.cardBorder,
+  },
+  statBadgeText: {
+    color: Colors.textMuted,
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  sectionHead: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    marginLeft: 8,
+    color: Colors.accent,
+    fontSize: 17,
+    fontWeight: "800",
+  },
+  recentCard: {
+    borderRadius: 20,
+    padding: 16,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.cardBorder,
+  },
+  recentRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  recentDot: {
+    width: 4,
+    height: 28,
+    borderRadius: 2,
+    marginRight: 12,
+  },
+  recentText: {
+    flex: 1,
+    color: Colors.white,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "500",
+  },
+  tourBtn: {
+    marginTop: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.cardBorder,
+    backgroundColor: Colors.surfaceAlt,
+    overflow: "hidden",
+  },
+  tourBtnInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    width: "100%",
+  },
+  tourBtnText: {
+    marginLeft: 10,
+    color: Colors.accent,
+    fontSize: 15,
+    fontWeight: "700",
+  },
+});

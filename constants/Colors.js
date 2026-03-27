@@ -5,6 +5,7 @@ const Colors = {
 
   primary: "#3FB7A8",
   accent: "#4FD1C5",
+  primaryDark: "#2A8F83",
 
   textPrimary: "#FFFFFF",
   textSecondary: "#CBD5E1", // slate-300
@@ -12,6 +13,9 @@ const Colors = {
 
   inputBackground: "#1E293B",
   inputBorder: "#334155",
+  surface: "#172437",
+  surfaceAlt: "#22324A",
+  cardBorder: "#2B3C57",
 
   white: "#FFFFFF",
   black: "#000000",
